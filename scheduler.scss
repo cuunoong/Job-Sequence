@@ -1,0 +1,394 @@
+.scheduler {
+  --scheduler-scroll-padding-horizontal: 18px;
+  --scheduler-scroll-padding-vertical: 15px;
+
+  // Scheduler
+  --scheduler-height: var(--scheduler-prop-height, 400px);
+  --scheduler-width: var(--scheduler-prop-width, 100%);
+
+  --scheduler-divider-left: var(--scheduler-resource-width);
+  --scheduler-divider-height: var(--scheduler-height);
+
+  // Header
+  --scheduler-header-rows: var(--scheduler-prop-header-rows, 1);
+  --scheduler-header-columns: var(--scheduler-prop-total-columns, 1);
+
+  --scheduler-header-cell-height: var(--scheduler-prop-header-height, 40px);
+  --scheduler-header-cell-width: var(--scheduler-prop-header-width, 40px);
+
+  --scheduler-header-height: calc(
+    var(--scheduler-header-cell-height) * var(--scheduler-header-rows)
+  );
+  --scheduler-header-width: min(
+    var(--scheduler-width) - var(--scheduler-resource-width),
+    var(--scheduler-header-cell-width) * var(--scheduler-header-columns)
+  );
+
+  --scheduler-header-container-width: calc(
+    var(--scheduler-header-row-width) + var(--scheduler-scroll-padding-horizontal)
+  );
+  --scheduler-header-container-height: var(--scheduler-header-height);
+
+  // Resource
+  --scheduler-resource-total-rows: var(--scheduler-prop-total-rows, 10);
+
+  --scheduler-resource-cell-width: var(--scheduler-prop-resource-width, 200px);
+  --scheduler-resource-cell-height: var(--scheduler-prop-resource-height, 80px);
+
+  --scheduler-resource-corner-height: var(--scheduler-header-height);
+  --scheduler-resource-corner-width: var(--scheduler-resource-cell-width);
+
+  --scheduler-resource-divider-top: var(--scheduler-header-height);
+
+  --scheduler-resource-container-width: var(--scheduler-resource-cell-width);
+  --scheduler-resource-container-height: calc(
+    var(--scheduler-resource-cell-height) * var(--scheduler-resource-total-rows) +
+      var(--scheduler-scroll-padding-vertical)
+  );
+
+  --scheduler-resource-scroll-top: calc(var(--scheduler-resource-corner-height) + 1px);
+  --scheduler-resource-scroll-width: var(--scheduler-resource-container-width);
+  --scheduler-resource-scroll-height: calc(
+    min(
+      var(--scheduler-resource-container-height),
+      var(--scheduler-height) - var(--scheduler-resource-corner-height) - 1px
+    )
+  );
+
+  --scheduler-resource-height: calc(
+    var(--scheduler-resource-scroll-height) + var(--scheduler-resource-corner-height)
+  );
+  --scheduler-resource-width: var(--scheduler-resource-scroll-width);
+
+  // Body
+  --scheduler-body-top: calc(var(--scheduler-header-height) + 1px);
+  --scheduler-body-width: var(--scheduler-header-width);
+  --scheduler-body-height: var(--scheduler-resource-scroll-height);
+
+  --scheduler-matrix-width: calc(
+    var(--scheduler-header-container-width) - var(--scheduler-scroll-padding-horizontal)
+  );
+  --scheduler-matrix-height: calc(
+    var(--scheduler-resource-container-height) - var(--scheduler-scroll-padding-vertical)
+  );
+
+  --scheduler-matrix-divider-horizontal-width: var(--scheduler-matrix-width);
+  --scheduler-matrix-divider-vertical-height: var(--scheduler-matrix-height);
+
+  --scheduler-body-current-time-height: var(--scheduler-matrix-height);
+
+  --scheduler-task-padding-vertical: var(--scheduler-prop-task-padding-vertical, 4px);
+  --scheduler-task-height: calc(
+    var(--scheduler-resource-cell-height) - var(--scheduler-task-padding-vertical) * 2
+  );
+
+  --scheduler-task-milestone-vertical-offset: calc(
+    -1 * var(--scheduler-task-padding-vertical) / 1.5
+  );
+  // ----
+
+  user-select: none;
+  overflow: hidden;
+  position: relative;
+  line-height: 1.2;
+  width: var(--scheduler-width);
+  height: var(--scheduler-height);
+
+  border: 1px solid var(--scheduler-divider-color, #e0e0e0);
+
+  font-family: var(
+    --scheduler-font-family,
+    -apple-system,
+    system-ui,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif
+  );
+
+  font-size: var(--scheduler-font-size, 13px);
+
+  & * {
+    box-sizing: content-box;
+  }
+
+  &-resource {
+    position: absolute;
+    left: 0;
+    width: var(--scheduler-resource-width);
+    height: var(--scheduler-resource-height);
+
+    &-corner {
+      position: absolute;
+      overflow: hidden;
+      width: var(--scheduler-resource-corner-width);
+      height: var(--scheduler-resource-corner-height);
+
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-wrap: balance;
+      text-align: center;
+
+      @extend .header;
+    }
+
+    &-divider {
+      position: absolute;
+      height: 0px;
+      top: var(--scheduler-resource-divider-top);
+      width: 100%;
+      border-top: 1px solid transparent;
+      background-color: var(--scheduler-divider-color, #e0e0e0);
+    }
+
+    &-scroll {
+      top: var(--scheduler-resource-scroll-top);
+      width: var(--scheduler-resource-scroll-width);
+      height: var(--scheduler-resource-scroll-height);
+      overflow: hidden;
+      position: relative;
+    }
+
+    &-container {
+      width: var(--scheduler-resource-container-width);
+      height: var(--scheduler-resource-container-height);
+    }
+
+    &-row {
+      position: absolute;
+      width: var(--scheduler-resource-cell-width);
+      border: 0px none;
+
+      &-label {
+        overflow: hidden;
+        width: var(--scheduler-resource-cell-width);
+        height: var(--scheduler-resource-cell-height);
+        position: relative;
+        display: flex;
+        align-items: var(--scheduler-header-align, center);
+        justify-content: var(--scheduler-header-justify, center);
+
+        font-weight: 500;
+
+        @extend .header;
+      }
+
+      &-divider {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 0px;
+        border-top: 1px solid transparent;
+        background-color: var(--scheduler-divider-color, #e0e0e0);
+        box-sizing: content-box;
+      }
+    }
+  }
+
+  &-divider {
+    position: absolute;
+    left: var(--scheduler-divider-left);
+    width: 1px;
+    height: var(--scheduler-divider-height);
+    background-color: var(--scheduler-divider-color, #e0e0e0);
+  }
+
+  &-timeline {
+    position: relative;
+    left: calc(var(--scheduler-resource-width) + 1px);
+
+    &-header {
+      position: absolute;
+      height: var(--scheduler-prop-header-height);
+      user-select: none;
+      overflow: hidden;
+      white-space: nowrap;
+
+      @extend .header;
+
+      &-scroll {
+        overflow: hidden;
+        display: block;
+        position: absolute;
+        top: 0;
+        width: var(--scheduler-header-width);
+        height: var(--scheduler-header-height);
+      }
+
+      &-container {
+        width: var(--scheduler-header-container-width);
+        height: var(--scheduler-header-container-height);
+      }
+
+      &-group {
+        position: relative;
+      }
+
+      &-cell {
+        display: flex;
+        align-items: var(--scheduler-header-align, center);
+        justify-content: var(--scheduler-header-justify, center);
+        padding: var(--scheduler-header-padding, 0);
+        inset: 0;
+        position: absolute;
+        border-right: 1px solid var(--scheduler-divider-color, #e0e0e0);
+
+        &-inner {
+          inset: 0;
+          border-bottom: 1px solid var(--scheduler-divider-color, #e0e0e0);
+        }
+
+        &-label {
+          position: absolute;
+          overflow: hidden;
+          inset: 0;
+
+          @extend .scheduler-timeline-header-cell;
+        }
+      }
+    }
+
+    &-divider {
+      position: absolute;
+      top: var(--scheduler-header-height);
+      width: var(--scheduler-header-width);
+      height: 1px;
+      box-sizing: border-box;
+      border-bottom: 1px solid transparent;
+      background-color: var(--scheduler-divider-color, #e0e0e0);
+    }
+  }
+
+  &-body {
+    overflow: auto;
+    top: var(--scheduler-body-top);
+    height: var(--scheduler-body-height);
+    width: var(--scheduler-body-width);
+    position: absolute;
+
+    &-matrix {
+      user-select: none;
+      min-height: 1px;
+      position: absolute;
+      height: var(--scheduler-matrix-height);
+      width: var(--scheduler-matrix-width);
+
+      &-date {
+        &-cell {
+          background-color: var(--scheduler-resource-block-color, #fff);
+          position: absolute;
+          width: var(--scheduler-header-cell-width);
+          height: var(--scheduler-resource-cell-height);
+
+          &-odd {
+            background-color: var(--scheduler-resource-block-color-odd, #f9f9f9);
+          }
+
+          &-even {
+            background-color: var(--scheduler-resource-block-color-even, #fff);
+          }
+        }
+      }
+
+      &-divider {
+        &-horizontal {
+          position: absolute;
+          left: 0;
+          right: 0;
+          border-top: 1px solid var(--scheduler-divider-horizontal-color, #e0e0e0);
+          pointer-events: none;
+          width: var(--scheduler-matrix-divider-horizontal-width);
+          opacity: 0.5;
+        }
+
+        &-vertical {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          border-left: 1px dashed var(--scheduler-divider-vertical-color, #e0e0e0);
+          pointer-events: none;
+          height: var(--scheduler-matrix-divider-vertical-height);
+          opacity: 0.5;
+        }
+      }
+    }
+
+    &-current-time {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      height: var(--scheduler-body-current-time-height);
+      width: 0;
+      border-left: 2px dashed var(--scheduler-current-time-color, #e0e0e0);
+      pointer-events: none;
+    }
+  }
+
+  &-task {
+    position: absolute;
+    height: var(--scheduler-task-height);
+
+    &-label {
+      width: 100%;
+      height: 100%;
+      background-color: blue;
+    }
+
+    &-milestone {
+      z-index: 1;
+      width: 100%;
+      position: absolute;
+      top: var(--scheduler-task-milestone-vertical-offset);
+      bottom: var(--scheduler-task-milestone-vertical-offset);
+      background-color: red;
+      opacity: 0.5;
+    }
+
+    &-item {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      opacity: 0.9;
+      border-radius: 6px;
+      font-size: 9px;
+      white-space: nowrap;
+      border: 1px solid var(--scheduler-task-item-border-color, green);
+      background-color: var(--scheduler-task-item-background-color, green);
+      color: var(--scheduler-task-item-text-color, white);
+      display: flex;
+      flex-direction: column;
+
+      &-header {
+        background-color: var(--scheduler-task-item-header-color, black);
+        padding: 2px;
+        color: var(--scheduler-task-item-header-text-color, white);
+        height: 14px;
+        display: flex;
+        align-items: center;
+      }
+
+      &-content {
+        padding: 2px;
+      }
+
+      &--selected {
+        opacity: 1;
+        border: 1px dashed black;
+        box-shadow: var(--scheduler-task-item-selected-border-color, #3b82f6) 2px 2px 4px 2px;
+      }
+
+      &--not-indexed {
+        opacity: 0.1;
+      }
+    }
+  }
+}
+
+.header {
+  color: var(--scheduler-header-text-color, #333);
+  background-color: var(--scheduler-header-bg-color, #f3f3f3);
+}
